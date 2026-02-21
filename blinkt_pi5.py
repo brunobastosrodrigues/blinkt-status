@@ -10,9 +10,9 @@ __version__ = '0.1.3-pi5'
 
 def _find_rp1_chip():
     """Find the gpiochip number for the RP1 (Pi 5 header GPIOs)."""
-    for path in sorted(glob.glob('/sys/bus/gpio/devices/gpiochip*/label')):
-        with open(path) as f:
-            if 'pinctrl-rp1' in f.read():
+    for path in sorted(glob.glob('/sys/bus/gpio/devices/gpiochip*/of_node/compatible')):
+        with open(path, 'rb') as f:
+            if b'rp1-gpio' in f.read():
                 return int(path.split('gpiochip')[1].split('/')[0])
     return 0
 
