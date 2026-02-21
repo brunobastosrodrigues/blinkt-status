@@ -78,14 +78,13 @@ def update_leds(check_fn):
     else:
         blinkt.set_pixel(0, 255, 0, 0, BRIGHTNESS)      # red = disconnected
 
-    # LEDs 1-7: CPU usage gradient (sqrt scale for sensitivity at low usage)
+    # LEDs 1-7: CPU usage gradient (sqrt scale, fills from right to left)
     cpu = psutil.cpu_percent(interval=None)
     lit_count = max(1, round(math.sqrt(cpu / 100.0) * 7))
 
-    for i in range(7):
-        if i < lit_count:
-            r, g, b = CPU_COLORS[i]
-            blinkt.set_pixel(i + 1, r, g, b, BRIGHTNESS)
+    for i in range(lit_count):
+        r, g, b = CPU_COLORS[i]
+        blinkt.set_pixel(7 - i, r, g, b, BRIGHTNESS)
 
     blinkt.show()
 
