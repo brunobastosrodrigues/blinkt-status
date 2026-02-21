@@ -1,10 +1,20 @@
 import atexit
+import glob
 import time
 
 import lgpio
 
 
-__version__ = '0.1.2-pi5'
+__version__ = '0.1.3-pi5'
+
+
+def _find_rp1_chip():
+    """Find the gpiochip number for the RP1 (Pi 5 header GPIOs)."""
+    for path in sorted(glob.glob('/sys/bus/gpio/devices/gpiochip*/label')):
+        with open(path) as f:
+            if 'pinctrl-rp1' in f.read():
+                return int(path.split('gpiochip')[1].split('/')[0])
+    return 0
 
 DAT = 23
 CLK = 24
@@ -75,7 +85,7 @@ def show():
     global _gpio_setup, _handle
 
     if not _gpio_setup:
-        _handle = lgpio.gpiochip_open(0)
+        _handle = lgpio.gpiochip_open(_find_rp1_chip())
         try:
             lgpio.gpio_claim_output(_handle, DAT)
         except lgpio.error:
