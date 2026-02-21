@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Blinkt status daemon — WiFi connectivity + CPU usage on 8 LEDs."""
 
+import math
 import signal
 import subprocess
 import sys
@@ -77,9 +78,9 @@ def update_leds(check_fn):
     else:
         blinkt.set_pixel(0, 255, 0, 0, BRIGHTNESS)      # red = disconnected
 
-    # LEDs 1-7: CPU usage gradient
+    # LEDs 1-7: CPU usage gradient (sqrt scale for sensitivity at low usage)
     cpu = psutil.cpu_percent(interval=None)
-    lit_count = round(cpu / 100.0 * 7)
+    lit_count = max(1, round(math.sqrt(cpu / 100.0) * 7))
 
     for i in range(7):
         if i < lit_count:
