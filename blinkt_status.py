@@ -48,7 +48,7 @@ def wifi_connected():
     """Check if wlan0 is associated to an AP (client mode)."""
     try:
         result = subprocess.run(
-            ['iw', 'dev', 'wlan0', 'link'],
+            ['/usr/sbin/iw', 'dev', 'wlan0', 'link'],
             capture_output=True, text=True, timeout=5
         )
         return 'Connected to' in result.stdout
